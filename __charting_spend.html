@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<script src="https://d3js.org/d3.v7.min.js"></script>
+	<style>
+		.tooltip {
+		  pointer-events: none;
+		  font-size: 12px;
+		}
+	</style>
+</head>
+<body>
+	<div id="checkboxes">
+	</div>
+	<svg width="800" height="500">
+	</svg>
+	<script>
+		
+		/*
+		const data = [
+		{ time: "Q1", category: "A", value: 30 },
+		{ time: "Q2", category: "A", value: 50 },
+		{ time: "Q3", category: "A", value: 40 },
+		{ time: "Q1", category: "B", value: 20 },
+		{ time: "Q2", category: "B", value: 35 },
+		{ time: "Q3", category: "B", value: 60 },
+		{ time: "Q1", category: "C", value: 25 },
+		{ time: "Q2", category: "C", value: 30 },
+		{ time: "Q3", category: "C", value: 45 },
+		];
+		*/
+		
+		let ccName = [
+		"RAPID & IH Planning", 
+		"ACUP Planning", 
+		"ORDAI Planning", 
+		"RAPID DME", 
+		"RAPID DME security", 
+		"RAPID O&M", 
+		"RAPID O&M security", 
+		"Program Management", 
+		"ACUP DME", 
+		"ACUP DME security", 
+		"ACUP O&M", 
+		"ACUP O&M security", 
+		"ORDAI DME", 
+		"ORDAI DME security", 
+		"ORDAI O&M", 
+		"ORDAI O&M security"
+		];
+		
+		let reportingPeriod = [
+		"July 2024", 
+		"Aug 2024", 
+		"Sep 2024", 
+		"Oct 2024", 
+		"Nov 2024", 
+		"Dec 2024", 
+		"Jan 2025", 
+		"Feb 2025", 
+		"March 2025", 
+		"April 2025", 
+		"May 2025"//, 
+		//"June 2025"
+		];
+		
+		let actualSpend = [
+		4641.2, 
+		8828.7268, 
+		13589.2778, 
+		9869.684, 
+		11836.5442, 
+		8110.825, 
+		11014.691, 
+		11183.0206, 
+		15527.7906, 
+		8771.5072, 
+		8259.61, 
+		226.4, 
+		430.6696, 
+		662.8916, 
+		481.448, 
+		577.3924, 
+		395.65, 
+		537.302, 
+		545.5132, 
+		757.4532, 
+		427.8784, 
+		402.91, 
+		792.4, 
+		1507.3436, 
+		2320.1206, 
+		1685.068, 
+		2020.8734, 
+		1384.775, 
+		1880.557, 
+		1909.2962, 
+		2651.0862, 
+		1497.5744, 
+		1410.18, 
+		12530.187, 
+		29212.686, 
+		14247.576, 
+		6068.196, 
+		10093.59, 
+		22365.702, 
+		32720.409, 
+		43670.331, 
+		53229.6, 
+		27681.876, 
+		25913.06, 
+		1392.243, 
+		3245.854, 
+		1583.064, 
+		674.244, 
+		1121.51, 
+		2485.078, 
+		3635.601, 
+		4852.259, 
+		5914.4, 
+		3075.764, 
+		2879.23, 
+		14087.862, 
+		32420.493, 
+		32250.15, 
+		37396.161, 
+		35362.026, 
+		18861.525, 
+		26524.503, 
+		24158.151, 
+		38867.706, 
+		41487.786, 
+		32554.5, 
+		1565.318, 
+		3602.277, 
+		3583.35, 
+		4155.129, 
+		3929.114, 
+		2095.725, 
+		2947.167, 
+		2684.239, 
+		4318.634, 
+		4609.754, 
+		3616.05, 
+		6219.65, 
+		8514.83, 
+		10551.86, 
+		7508.24, 
+		8058.5, 
+		6439.35, 
+		5719.25, 
+		7105.56, 
+		9049.12, 
+		4620.53, 
+		6013.74, 
+		7684.785, 
+		12376.071, 
+		15580.674, 
+		8815.518, 
+		9435.348, 
+		11633.31, 
+		8056.386, 
+		7450.236, 
+		7290.504, 
+		5171.994, 
+		1957.05, 
+		853.865, 
+		1375.119, 
+		1731.186, 
+		979.502, 
+		1048.372, 
+		1292.59, 
+		895.154, 
+		827.804, 
+		810.056, 
+		574.666, 
+		217.45, 
+		365.562, 
+		380.016, 
+		886.05, 
+		1215.801, 
+		0, // -742.464, 
+		1464.021, 
+		1087.578, 
+		1422.189, 
+		1270.575, 
+		645.246, 
+		1394.32, 
+		40.618, 
+		42.224, 
+		98.45, 
+		135.089, 
+		0, // -82.496, 
+		162.669, 
+		120.842, 
+		158.021, 
+		141.175, 
+		71.694, 
+		154.92, 
+		1337.373, 
+		904.995, 
+		5359.23, 
+		537.957, 
+		1432.683, 
+		1678.824, 
+		3129.741, 
+		428.562, 
+		7214.121, 
+		2828.835, 
+		1112.89, 
+		148.597, 
+		100.555, 
+		595.47, 
+		59.773, 
+		159.187, 
+		186.536, 
+		347.749, 
+		47.618, 
+		801.569, 
+		314.315, 
+		123.65, 
+		2029.401, 
+		2011.896, 
+		3966.624, 
+		1178.541, 
+		5615.838, 
+		6955.452, 
+		3437.388, 
+		5078.304, 
+		2394.27, 
+		455.067, 
+		2452.05, 
+		225.489, 
+		223.544, 
+		440.736, 
+		130.949, 
+		623.982, 
+		772.828, 
+		381.932, 
+		564.256, 
+		266.03, 
+		50.563, 
+		272.45 
+		];
+		
+		let data = [];
+		
+		for (let i=0; i<reportingPeriod.length; i++)
+			{
+			for (let j=0; j<ccName.length; j++)
+				{
+				data.push	(
+								{
+								"time":		reportingPeriod[i],
+								"category":	ccName[j],
+								"value":	actualSpend[(i*16)+j]
+								}
+							)
+				}
+			}
+		
+		const svg = d3.select("svg"),
+		margin = {top: 20, right: 80, bottom: 30, left: 50},
+		width = +svg.attr("width") - margin.left - margin.right,
+		height = +svg.attr("height") - margin.top - margin.bottom,
+		g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+		const categories = Array.from(new Set(data.map(d => d.category)));
+		const times = Array.from(new Set(data.map(d => d.time)));
+
+		const x = d3.scalePoint().domain(times).range([0, width]).padding(0.5);
+		const y = d3.scaleLinear().domain([0, d3.max(data, d => d.value)]).range([height, 0]);
+
+		g.append("g")
+		.attr("transform", `translate(0,${height})`)
+		.call(d3.axisBottom(x));
+
+		g.append("g")
+		.call(d3.axisLeft(y));
+
+		const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+		const tooltip = d3.select("body").append("div")
+		.attr("class", "tooltip")
+		.style("opacity", 0)
+		.style("position", "absolute")
+		.style("background", "white")
+		.style("padding", "5px")
+		.style("border", "1px solid gray");
+
+		function drawLines(selected) {
+		g.selectAll(".line").remove();
+		g.selectAll(".point").remove();
+
+		selected.forEach(cat => {
+		const values = data.filter(d => d.category === cat);
+
+		g.append("path")
+		.datum(values)
+		.attr("class", "line")
+		.attr("fill", "none")
+		.attr("stroke", color(cat))
+		.attr("stroke-width", 2)
+		.attr("d", d3.line()
+		.x(d => x(d.time))
+		.y(d => y(d.value)));
+
+		g.selectAll(`.point-${cat}`)
+		.data(values)
+		.enter().append("circle")
+		.attr("class", "point")
+		.attr("cx", d => x(d.time))
+		.attr("cy", d => y(d.value))
+		.attr("r", 4)
+		.attr("fill", color(cat))
+		.on("mouseover", (event, d) => {
+		tooltip.transition().duration(200).style("opacity", 1);
+		tooltip.html(`Time: ${d.time}<br>Category: ${d.category}<br>Value: ${d.value}`)
+		.style("left", (event.pageX + 10) + "px")
+		.style("top", (event.pageY - 20) + "px");
+		})
+		.on("mouseout", () => tooltip.transition().duration(500).style("opacity", 0));
+		});
+		}
+
+		// Checkboxes
+		const checkboxContainer = d3.select("#checkboxes");
+		categories.forEach(cat => {
+		const label = checkboxContainer.append("label").style("margin-right", "10px");
+		label.append("input")
+		.attr("type", "checkbox")
+		.attr("value", cat)
+		.on("change", function() {
+		const selected = Array.from(document.querySelectorAll("input[type=checkbox]:checked")).map(cb => cb.value);
+		drawLines(selected);
+		});
+		label.append("span").text(cat);
+		});
+	</script>
+</body>
+</html>
